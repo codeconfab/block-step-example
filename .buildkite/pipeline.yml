@@ -1,6 +1,22 @@
 steps:
+  - label: ":test_tube: Run tests"
+    command: "echo 'Running tests....' 'Success!'"
+    key: "unit-tests"
+
+  - command: "deploy.sh"
+    label: ":rocket: Deploy to dev/qa"
+    key: "deploy-qa"
+    branches: "main"
+    concurrency: 1
+    concurrency_group: 'deploy/qa'
+    depends_on:
+      - "unit-tests"
+
   - block: "Release"
+    branches: "main"
     prompt: "Fill out the details for release"
+    depends_on:
+      - "deploy-qa"
     fields: 
       - text: "Release Name"
         key: "release-name"
@@ -17,5 +33,7 @@ steps:
           value: "beta"
         - label: "Stable"
           value: "stable"
+
   - command: release.sh
-    label: ":rocket:"
+    label: ":rocket: Create release branch"
+    branches: "main"
