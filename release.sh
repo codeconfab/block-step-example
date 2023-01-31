@@ -7,6 +7,7 @@ set -eu
 
 RELEASE_NAME=$(buildkite-agent meta-data get release-name)
 RELEASE_TYPE=$(buildkite-agent meta-data get release-type)
+WAIT_TIME=${WAIT_TIME:-30}
 
 # The `release-notes` field is optional (required: false)
 # so we'll default it to "n/a" if a value doesn't exist
@@ -26,8 +27,11 @@ echo
 
 echo "+++ :boom: Bumping $RELEASE_TYPE version"
 
+echo "Simulating a ${WAIT_TIME}s release..."
+sleep $WAIT_TIME
+
 echo "✅"
 
 echo "--- :pipeline: Uploading notify pipeline"
 
-./generate-notify-pipeline.sh | buildkite-agent pipeline upload 
+./generate-notify-pipeline.sh | buildkite-agent pipeline upload
